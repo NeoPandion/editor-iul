@@ -2,6 +2,7 @@ mod app;
 mod file;
 mod shortcuts;
 mod syntax_highlighting;
+mod tools;
 use std::path::PathBuf;
 
 use eframe::egui;
@@ -14,6 +15,12 @@ pub struct Settings {
     pub dark_mode: bool,
     pub theme: CodeTheme,
 }
+
+pub struct Terminal {
+    pub is_toggled: bool,
+    pub text: String,
+}
+
 pub struct Editor {
     pub lang: String,
     pub picked_path: String,
@@ -23,6 +30,7 @@ pub struct Editor {
     pub code: String,
     pub saved: bool,
     pub settings: Settings,
+    pub terminal: Terminal,
 }
 
 impl Default for Editor {
@@ -40,6 +48,10 @@ impl Default for Editor {
                 font_size: 15.,
                 theme: CodeTheme::dark(),
                 dark_mode: true,
+            },
+            terminal: Terminal {
+                is_toggled: false,
+                text: String::from(""),
             },
         }
     }

@@ -125,21 +125,24 @@ pub fn scan_dir(begin: String, ui: &mut egui::Ui, ed: &mut Editor) {
                                 ))
                                 .show(ui, |ui| scan_dir(file.path().display().to_string(), ui, ed));
                             } else {
-                                if (ui.button(format!(
-                                    "{}{}",
-                                    get_lang_icon({
-                                        match file.path().extension().and_then(OsStr::to_str) {
+                                if (ui.selectable_label(
+                                    false,
+                                    format!(
+                                        "{}{}",
+                                        get_lang_icon({
+                                            match file.path().extension().and_then(OsStr::to_str) {
+                                                Some(a) => a,
+                                                None => " ",
+                                            }
+                                        }),
+                                        match a.to_str() {
                                             Some(a) => a,
-                                            None => " ",
+                                            None => {
+                                                ""
+                                            }
                                         }
-                                    }),
-                                    match a.to_str() {
-                                        Some(a) => a,
-                                        None => {
-                                            ""
-                                        }
-                                    }
-                                )))
+                                    ),
+                                ))
                                 .clicked()
                                 {
                                     file_open(ed, file.path().display().to_string());

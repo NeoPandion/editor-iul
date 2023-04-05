@@ -17,24 +17,29 @@ impl eframe::App for Editor {
 
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
-                if ui.button("show directory").clicked() {
-                    if !(self.settings_panel) {
-                        self.left_panel = !self.left_panel;
+                ui.with_layout(egui::Layout::left_to_right(egui::Align::LEFT), |ui| {
+                    if ui.button("show directory").clicked() {
+                        if !(self.settings_panel) {
+                            self.left_panel = !self.left_panel;
+                        }
+                        self.settings_panel = false;
                     }
-                    self.settings_panel = false;
-                }
+                    ui.separator();
+                });
 
-                ui.separator();
-                match self.saved {
-                    true => {
-                        ui.label(format!("File: {}", self.picked_path));
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::RIGHT), |ui| {
+                    ui.separator();
+                    match self.saved {
+                        true => {
+                            ui.label(format!("File: {}", self.picked_path));
+                        }
+                        false => {
+                            ui.label(format!("File: {}*", self.picked_path));
+                        }
                     }
-                    false => {
-                        ui.label(format!("File: {}*", self.picked_path));
-                    }
-                }
-                ui.separator();
-                ui.label(format!("Lang: {}", self.lang));
+                    ui.separator();
+                    ui.label(format!("Lang: {}", self.lang));
+                });
             });
         });
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
@@ -77,6 +82,15 @@ impl eframe::App for Editor {
                         self.settings_panel = true;
                     }
                 });
+
+                ui.separator();
+                ui.menu_button("Tools", |ui| {
+                    if ui.button("Run").clicked() {}
+                    if ui.button("Run Project").clicked() {}
+                    if ui.button("Toggle Terminal").clicked() {
+                        self.terminal.is_toggled = !self.terminal.is_toggled;
+                    }
+                });
                 ui.separator();
                 ui.menu_button("Help", |ui| {
                     if ui.button("About").clicked() {}
@@ -116,33 +130,50 @@ impl eframe::App for Editor {
                     });
             }
 
-            egui::ScrollArea::vertical().show(ui, |ui| {
-                let mut theme = syntax_highlighting::CodeTheme::dark();
-                if !self.settings.dark_mode {
-                    theme = syntax_highlighting::CodeTheme::light();
-                }
-                let mut layouter = |ui: &egui::Ui, _string: &str, _wrap_width: f32| {
-                    let mut layout_job =
-                        syntax_highlighting::highlight(ui.ctx(), &theme, _string, &self.lang);
-                    layout_job.wrap.max_width = _wrap_width;
-                    ui.fonts(|f| f.layout_job(layout_job))
-                };
-                if ui
-                    .add(
-                        egui::TextEdit::multiline(&mut self.code)
-                            .font(egui::TextStyle::Monospace)
-                            .code_editor()
-                            .lock_focus(true)
-                            .desired_rows(48)
-                            .desired_width(f32::INFINITY)
-                            .layouter(&mut layouter)
-                            .id("CodeEditor".into()),
-                    )
-                    .changed()
-                {
-                    self.saved = false;
-                }
-                shortcuts::set_default_shortcuts(ui, self, frame);
+            egui::ScrollArea::horizontal().show(ui, |ui| {
+                egui::ScrollArea::vertical().show(ui, |ui| {
+                    let mut theme = syntax_highlighting::CodeTheme::dark();
+                    if !self.settings.dark_mode {
+                        theme = syntax_highlighting::CodeTheme::light();
+                    }
+                    let mut layouter = |ui: &egui::Ui, _string: &str, _wrap_width: f32| {
+                        let mut layout_job =
+                            syntax_highlighting::highlight(ui.ctx(), &theme, _string, &self.lang);
+                        layout_job.wrap.max_width = _wrap_width;
+                        ui.fonts(|f| f.layout_job(layout_job))
+                    };
+                    if ui
+                        .add(
+                            egui::TextEdit::multiline(&mut self.code)
+                                .font(egui::TextStyle::Monospace)
+                                .code_editor()
+                                .lock_focus(true)
+                                .desired_rows(48)
+                                .desired_width(f32::INFINITY)
+                                .layouter(&mut layouter)
+                                .id("CodeEditor".into()),
+                        )
+                        .changed()
+                    {
+                        self.saved = false;
+                    }
+                    if self.terminal.is_toggled {
+                        egui::TopBottomPanel::bottom("term")
+                            .default_height(300.)
+                            .show(ctx, |ui| {
+                                egui::ScrollArea::vertical().show(ui, |ui| {
+                                    ui.add(
+                                        egui::TextEdit::multiline(&mut self.code)
+                                            .font(egui::TextStyle::Monospace)
+                                            .lock_focus(true)
+                                            .desired_rows(15)
+                                            .desired_width(f32::INFINITY),
+                                    );
+                                });
+                            });
+                    }
+                    shortcuts::set_default_shortcuts(ui, self, frame);
+                });
             });
         });
     }
