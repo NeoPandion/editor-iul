@@ -3,9 +3,9 @@ mod file;
 mod shortcuts;
 mod syntax_highlighting;
 mod tools;
-use std::path::PathBuf;
-
 use eframe::egui;
+use std::path::PathBuf;
+use tools::Terminal;
 
 use self::syntax_highlighting::CodeTheme;
 
@@ -14,11 +14,6 @@ pub struct Settings {
     pub font_size: f32,
     pub dark_mode: bool,
     pub theme: CodeTheme,
-}
-
-pub struct Terminal {
-    pub is_toggled: bool,
-    pub text: String,
 }
 
 pub struct Editor {
@@ -43,15 +38,12 @@ impl Default for Editor {
             picked_path: "untitled.txt".to_string(),
             project_path: None,
             code: String::from(""),
+            terminal: Terminal::default(),
             settings: Settings {
                 is_startup: true,
                 font_size: 15.,
                 theme: CodeTheme::dark(),
                 dark_mode: true,
-            },
-            terminal: Terminal {
-                is_toggled: false,
-                text: String::from(""),
             },
         }
     }
@@ -112,6 +104,8 @@ impl Editor {
             ctx.set_fonts(fonts);
             ctx.set_style(style);
             self.settings.is_startup = false;
+            Terminal::startup(self);
+            // self.terminal.startup();
         }
     }
 

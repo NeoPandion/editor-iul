@@ -1,9 +1,13 @@
-use eframe::egui::{self, Visuals};
+use std::process::id;
+
+use eframe::egui::{self, global_dark_light_mode_switch, Visuals};
 // use egui_keybinds::KeyBindWidget;
 
 use super::{
     file::{self, file_write, scan_dir},
-    shortcuts, syntax_highlighting, Editor,
+    shortcuts, syntax_highlighting,
+    tools::terminal,
+    Editor,
 };
 
 impl eframe::App for Editor {
@@ -103,6 +107,34 @@ impl eframe::App for Editor {
             })
         });
 
+        if self.terminal.is_toggled {
+            egui::TopBottomPanel::bottom("term")
+                .default_height(300.)
+                .resizable(true)
+                .show(ctx, |ui| {
+                    egui::ScrollArea::vertical().show(ui, |ui| {
+                        ui.add(
+                            egui::TextEdit::multiline(&mut self.terminal.input)
+                                .font(egui::TextStyle::Monospace)
+                                .lock_focus(true)
+                                .desired_rows(15)
+                                .desired_width(f32::INFINITY)
+                                .cursor_at_end(true),
+                        );
+                        if ui.input_mut(|i| {
+                            i.consume_key(
+                                egui::Modifiers {
+                                    ..Default::default()
+                                },
+                                egui::Key::Enter,
+                            )
+                        }) {
+                            terminal(self);
+                        }
+                    });
+                });
+        }
+
         egui::CentralPanel::default().show(ctx, |ui| {
             if self.left_panel {
                 egui::SidePanel::left("side_panel")
@@ -112,14 +144,13 @@ impl eframe::App for Editor {
                             if !(self.settings_panel) {
                                 ui.heading("Project Tree\t\t\t");
                                 ui.vertical(|ui| match self.project_path.clone() {
-                                    // ui.collapsing("Files", |ui|  {
                                     Some(a) => scan_dir(a.to_string(), ui, self),
                                     None => scan_dir(".".to_string(), ui, self),
-                                    // });
                                 });
                             } else {
                                 ui.heading("Preferences\t\t\t");
                                 ui.vertical(|ui| {
+                                    // global_dark_light_mode_switch(ui)
                                     ui.add(egui::Checkbox::new(
                                         &mut self.settings.dark_mode,
                                         "Dark Mode",
@@ -156,21 +187,6 @@ impl eframe::App for Editor {
                         .changed()
                     {
                         self.saved = false;
-                    }
-                    if self.terminal.is_toggled {
-                        egui::TopBottomPanel::bottom("term")
-                            .default_height(300.)
-                            .show(ctx, |ui| {
-                                egui::ScrollArea::vertical().show(ui, |ui| {
-                                    ui.add(
-                                        egui::TextEdit::multiline(&mut self.code)
-                                            .font(egui::TextStyle::Monospace)
-                                            .lock_focus(true)
-                                            .desired_rows(15)
-                                            .desired_width(f32::INFINITY),
-                                    );
-                                });
-                            });
                     }
                     shortcuts::set_default_shortcuts(ui, self, frame);
                 });

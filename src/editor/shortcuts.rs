@@ -18,10 +18,65 @@ macro_rules! keybind {
         }
     };
 
+    ($ui:tt, ctrl shift, $key:tt, $($code:tt),*) => {
+        let short = egui::KeyboardShortcut {
+            modifiers: egui::Modifiers {
+                ctrl: true,
+                shift: true,
+                ..Default::default()
+            },
+            key: egui::Key::$key,
+        };
+        if $ui.input_mut(|i| i.consume_shortcut(&short)) {
+            $($code),*
+        }
+    };
+    ($ui:tt, ctrl alt, $key:tt, $($code:tt),*) => {
+        let short = egui::KeyboardShortcut {
+            modifiers: egui::Modifiers {
+                ctrl: true,
+                alt: true,
+                ..Default::default()
+            },
+            key: egui::Key::$key,
+        };
+        if $ui.input_mut(|i| i.consume_shortcut(&short)) {
+            $($code),*
+        }
+    };
+
     ($ui:tt, alt, $key:tt, $($code:tt),*) => {
         let short = egui::KeyboardShortcut {
             modifiers: egui::Modifiers {
                 alt: true,
+                ..Default::default()
+            },
+            key: egui::Key::$key,
+        };
+        if $ui.input_mut(|i| i.consume_shortcut(&short)) {
+            $($code),*
+        }
+    };
+    ($ui:tt, alt shift, $key:tt, $($code:tt),*) => {
+        let short = egui::KeyboardShortcut {
+            modifiers: egui::Modifiers {
+                alt: true,
+                shift: true,
+                ..Default::default()
+            },
+            key: egui::Key::$key,
+        };
+        if $ui.input_mut(|i| i.consume_shortcut(&short)) {
+            $($code),*
+        }
+    };
+
+    ($ui:tt, ctrl alt, shift, $key:tt, $($code:tt),*) => {
+        let short = egui::KeyboardShortcut {
+            modifiers: egui::Modifiers {
+                ctrl: true,
+                alt: true,
+                shift: true,
                 ..Default::default()
             },
             key: egui::Key::$key,
@@ -57,6 +112,10 @@ pub fn set_default_shortcuts(ui: &mut egui::Ui, ed: &mut Editor, frame: &mut efr
             ed.left_panel = !ed.left_panel;
         }
         ed.settings_panel = false;
+    });
+
+    keybind!(ui, ctrl alt, T, {
+        ed.terminal.is_toggled = !ed.terminal.is_toggled
     });
 
     keybind!(ui, ctrl, P, {
