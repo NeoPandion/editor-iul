@@ -23,7 +23,7 @@ impl Highlighter {
             // Fallback:
             LayoutJob::simple(
                 code.into(),
-                egui::FontId::monospace(12.0),
+                egui::FontId::monospace(16.0),
                 if theme.dark_mode {
                     egui::Color32::LIGHT_GRAY
                 } else {
@@ -69,7 +69,7 @@ impl Highlighter {
                     leading_space: 0.0,
                     byte_range: as_byte_range(text, range),
                     format: TextFormat {
-                        font_id: egui::FontId::monospace(12.0),
+                        font_id: egui::FontId::monospace(16.0),
                         color: text_color,
                         italics,
                         underline,
@@ -271,3 +271,4 @@ fn as_byte_range(whole: &str, range: &str) -> std::ops::Range<usize> {
 }
 
 // ----------------------------------------------------------------------------
+

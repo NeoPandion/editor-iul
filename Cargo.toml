@@ -10,5 +10,4 @@ eframe = "*"
 syntect = "*"
 rfd="*"
 structopt ="*"
-# egui-keybinds = "*"
-# ssss
+portable-pty = "*"

@@ -1,6 +1,4 @@
-use std::process::id;
-
-use eframe::egui::{self, global_dark_light_mode_switch, Visuals};
+use eframe::egui::{self, Visuals};
 // use egui_keybinds::KeyBindWidget;
 
 use super::{
@@ -188,8 +186,8 @@ impl eframe::App for Editor {
                     {
                         self.saved = false;
                     }
-                    shortcuts::set_default_shortcuts(ui, self, frame);
                 });
+                shortcuts::set_default_shortcuts(ui, self, frame);
             });
         });
     }

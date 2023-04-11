@@ -121,4 +121,14 @@ pub fn set_default_shortcuts(ui: &mut egui::Ui, ed: &mut Editor, frame: &mut efr
     keybind!(ui, ctrl, P, {
         file::project_picker(ed);
     });
+
+    keybind!(ui, ctrl shift, PlusEquals, {
+        // println!("zooming in", );
+        egui::gui_zoom::zoom_in(ui.ctx());
+    });
+
+    keybind!(ui, ctrl, Minus, {
+        // println!("zooming out",);
+        egui::gui_zoom::zoom_out(ui.ctx());
+    });
 }
