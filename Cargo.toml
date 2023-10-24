@@ -1,6 +1,6 @@
 [package]
 name = "editor-iul"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,3 +11,4 @@ syntect = "*"
 rfd="*"
 structopt ="*"
 portable-pty = "*"
+onig = { version = "6", default-features = false }

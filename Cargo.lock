@@ -735,9 +735,10 @@ dependencies = [
 
 [[package]]
 name = "editor-iul"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "eframe",
+ "onig",
  "portable-pty",
  "rfd",
  "structopt",
