@@ -1,0 +1,4 @@
+* Compilar para windows
+instalar mingw-gcc
+* Compilar para macos
+https://wapl.es/rust/2019/02/17/rust-cross-compile-linux-to-macos.html/
