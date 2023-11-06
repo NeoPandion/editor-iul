@@ -4,32 +4,7 @@ on:
   push:
     branches: [master]
 
-jobs: 
-  build-linux-test:
-    name: build-linux-test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-    steps:
-        - uses: actions/checkout@v2
-        - uses: actions-rs/toolchain@v1
-          with:
-            toolchain: stable
-            target: ${{ matrix.target }}
-            override: true
-        - uses: actions-rs/cargo@master
-          with:
-            command: build
-            args: --release --target=${{ matrix.target }}
-        - name: Upload artifact
-          uses: actions/upload-artifact@v3
-          with:
-            name: Binary-linux
-            path: |
-              ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-              
+jobs:               
   build-linux:
     name: build-linux
     runs-on: ubuntu-latest
@@ -40,11 +15,12 @@ jobs:
         uses: rust-build/rust-build.action@master
         with:
           RUSTTARGET: x86_64-unknown-linux-musl
+          STATIC_LINKING: false
           UPLOAD_MODE: none
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Binary
+          name: Binary-linux
           path: |
             ${{ steps.compile.outputs.BUILT_ARCHIVE }}
             
