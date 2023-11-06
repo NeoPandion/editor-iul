@@ -9,6 +9,7 @@ jobs:
     name: build-linux
     runs-on: ubuntu-latest
     steps:
+      - run: sudo apt install libglib2.0-dev
       - uses: actions/checkout@master
       - name: Compile
         id: compile
